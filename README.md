@@ -1,5 +1,7 @@
 # my_shop
 
+This is a new demo for learning vue.
+
 ## Project setup
 ```
 npm install
