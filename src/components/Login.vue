@@ -6,10 +6,10 @@
       </div>
       <el-form label-width="0px" class="login_form">
         <el-form-item>
-          <el-input></el-input>
+          <el-input prefix-icon="iconfont icon-user"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input></el-input>
+          <el-input prefix-icon="iconfont icon-3702mima"></el-input>
         </el-form-item>
         <el-form-item class="btns">
           <el-button type="primary">Login</el-button>
