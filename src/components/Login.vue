@@ -4,12 +4,12 @@
       <div class="avatar_box">
         <img src="../assets/logo.png" alt />
       </div>
-      <el-form label-width="0px" class="login_form">
+      <el-form :model="loginForm" label-width="0px" class="login_form">
         <el-form-item>
-          <el-input prefix-icon="iconfont icon-user"></el-input>
+          <el-input v-model="loginForm.username" prefix-icon="iconfont icon-user"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-input prefix-icon="iconfont icon-3702mima"></el-input>
+          <el-input v-model="loginForm.password" prefix-icon="iconfont icon-3702mima" type="password"></el-input>
         </el-form-item>
         <el-form-item class="btns">
           <el-button type="primary">Login</el-button>
@@ -21,7 +21,16 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data () {
+    return {
+      loginForm: {
+        username: '',
+        password: ''
+      }
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>
@@ -60,15 +69,15 @@ export default {}
 }
 
 .login_form {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    padding: 0 20px;
-    box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding: 0 20px;
+  box-sizing: border-box;
 }
 
 .btns {
-    display: flex;
-    justify-content: flex-end;
+  display: flex;
+  justify-content: flex-end;
 }
 </style>
