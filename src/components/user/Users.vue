@@ -73,6 +73,26 @@
 <script>
 export default {
   data() {
+    const checkEmail = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('邮箱不能为空!'))
+      }
+      const regEmail = /^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$/
+      if (regEmail.test(value)) {
+        callback()
+      }
+      callback(new Error('请输入合法的邮箱!'))
+    }
+    const checkMobile = (rule, value, callback) => {
+      if (!value) {
+        callback(new Error('手机号不能为空!'))
+      }
+      const regMobile = /^[1]([3-9])[0-9]{9}$/
+      if (regMobile.test(value)) {
+        callback()
+      }
+      callback(new Error('请输入合法的手机号!'))
+    }
     return {
       // request obj
       queryInfo: {
@@ -121,12 +141,20 @@ export default {
             required: true,
             message: '请输入邮箱',
             trigger: 'blur'
+          },
+          {
+            validator: checkEmail,
+            trigger: 'blur'
           }
         ],
         mobile: [
           {
             required: true,
-            message: '请输入手机',
+            message: '请输入手机号',
+            trigger: 'blur'
+          },
+          {
+            validator: checkMobile,
             trigger: 'blur'
           }
         ]
