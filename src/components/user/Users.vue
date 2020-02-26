@@ -35,7 +35,12 @@
               size="mini"
               @click="showEditDialog(scope.row.id)"
             ></el-button>
-            <el-button type="danger" icon="el-icon-delete" size="mini"></el-button>
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="removeUserById(scope.row.id)"
+            ></el-button>
             <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
               <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
             </el-tooltip>
@@ -72,7 +77,7 @@
         <el-button type="primary" @click="addUser">确 定</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="修改用户" :visible.sync="editDialogVisible" width="50%">
+    <el-dialog title="修改用户" :visible.sync="editDialogVisible" width="50%" @click="editDialogClosed">
       <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">
         <el-form-item label="用户名">
           <el-input v-model="editForm.username" disabled></el-input>
@@ -86,7 +91,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="editDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="editDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="editUserInfo">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -126,10 +131,10 @@ export default {
       total: 0,
       addDialogVisible: false,
       addForm: {
-        username: 'admin1',
-        password: '123456',
-        email: 'hjf@hjf.com',
-        mobile: '17602110571'
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
       },
       addFormRules: {
         username: [
@@ -254,6 +259,58 @@ export default {
       console.log('edit dialog', res)
       this.editForm = res.data
       this.editDialogVisible = true
+    },
+    editDialogClosed() {
+      this.$refs.editFormRef.resetFields()
+    },
+    editUserInfo() {
+      this.$refs.editFormRef.validate(async valid => {
+        console.log('valid edit user info', valid)
+        if (!valid) return
+        // send request to modify user info
+        const { data: res } = await this.$http.put(
+          `users/${this.editForm.id}`,
+          {
+            email: this.editForm.email,
+            mobile: this.editForm.mobile
+          }
+        )
+        // console.log('user edit info', res)
+        if (res.meta.status !== 200) {
+          return this.$message.error('用户信息更新失败')
+        }
+        // close the edit dialog
+        this.editDialogVisible = false
+        // refresh data list
+        this.getUserList()
+        // notice the success
+        this.$message.success('更新用户信息成功!')
+      })
+    },
+    // remove user by the userid
+    async removeUserById(id) {
+      // console.log('user id', id)
+      const confirmResult = await this.$confirm(
+        '永久删除改用户, 是否继续?',
+        '提示',
+        {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }
+      ).catch(err => err)
+      // if user confirm, the result is 'confirm'
+      console.log('res ', confirmResult)
+      if (confirmResult !== 'confirm') {
+        return this.$message.info('已经取消删除')
+      }
+      console.log('确认了删除')
+      const { data: res } = await this.$http.delete(`users/${id}`)
+      if (res.meta.status !== 200) {
+        return this.$message.error('删除用户失败')
+      }
+      this.$message.error('删除用户成功')
+      this.getUserList()
     }
   }
 }
