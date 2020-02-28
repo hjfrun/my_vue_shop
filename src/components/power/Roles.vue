@@ -83,10 +83,11 @@
         node-key="id"
         default-expand-all
         :default-checked-keys="defKeys"
+        ref="treeRef"
       ></el-tree>
       <span slot="footer" class="dialog-footer">
         <el-button @click="setRightDialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="setRightDialogVisible = false">确认</el-button>
+        <el-button type="primary" @click="allotRights">确认</el-button>
       </span>
     </el-dialog>
   </div>
@@ -103,7 +104,8 @@ export default {
         children: 'children',
         label: 'authName'
       },
-      defKeys: []
+      defKeys: [],
+      roleId: ''
     }
   },
   created() {
@@ -136,6 +138,7 @@ export default {
       role.children = res.data
     },
     async showSetRightDialog(role) {
+      this.roleId = role.id
       // get all right list
       const { data: res } = await this.$http.get('rights/tree')
       if (res.meta.status !== 200) {
@@ -154,6 +157,24 @@ export default {
     },
     setRightDialogClosed() {
       this.defKeys = []
+    },
+    async allotRights() {
+      const keys = [
+        ...this.$refs.treeRef.getCheckedKeys(),
+        ...this.$refs.treeRef.getHalfCheckedKeys()
+      ]
+      console.log('right keys', keys)
+      const idStr = keys.join(',')
+      const { data: res } = await this.$http.post(
+        `roles/${this.roleId}/rights`,
+        { rids: idStr }
+      )
+      if (res.meta.status !== 200) {
+        return this.$message.error('分配权限失败')
+      }
+      this.$message.success('分配权限成功')
+      this.getRolesList()
+      this.setRightDialogVisible = false
     }
   }
 }
