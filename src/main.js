@@ -12,14 +12,24 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 import axios from 'axios'
 
 axios.defaults.baseURL = 'http://192.168.1.18:8888/api/private/v1/'
 axios.interceptors.request.use(config => {
   // console.log('config: ', config)
+  NProgress.start()
   config.headers.Authorization = window.sessionStorage.getItem('token')
   return config
 })
+
+axios.interceptors.response.use(config => {
+  NProgress.done()
+  return config
+})
+
 Vue.prototype.$http = axios
 
 Vue.config.productionTip = false
